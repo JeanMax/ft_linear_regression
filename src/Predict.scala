@@ -6,11 +6,12 @@
 //   By: mcanal <zboub@42.fr>                       +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2015/09/27 19:54:37 by mcanal            #+#    #+#             //
-//   Updated: 2015/09/28 17:52:33 by mcanal           ###   ########.fr       //
+//   Updated: 2015/09/28 18:54:26 by mcanal           ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
-import scala.io.Source //readLine
+import scala.io.Source.fromFile //read file
+import scala.io.StdIn.readLine //read... line
 
 object Predict
 {
@@ -21,8 +22,8 @@ object Predict
 
 		try
 		{
-			t0 = Source.fromFile("data/t0.learned").getLines.mkString.toFloat
-			t1 = Source.fromFile("data/t1.learned").getLines.mkString.toFloat
+			t0 = fromFile("data/t0.learned").getLines.mkString.toFloat
+			t1 = fromFile("data/t1.learned").getLines.mkString.toFloat
 		}
 		catch
 		{

@@ -6,11 +6,11 @@
 //   By: mcanal <zboub@42.fr>                       +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2015/09/27 19:55:54 by mcanal            #+#    #+#             //
-//   Updated: 2015/09/28 17:52:54 by mcanal           ###   ########.fr       //
+//   Updated: 2015/09/28 18:54:53 by mcanal           ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
-import scala.io.Source //read file
+import scala.io.Source.fromFile //read file
 import math.abs //do the math
 
 object Train
@@ -24,7 +24,7 @@ object Train
 
 		try
 		{
-			for (s <- Source.fromFile("data/data.csv").getLines.toList.map(_.split(",")).filter(_(0) != "km"))
+			for (s <- fromFile("data/data.csv").getLines.toList.map(_.split(",")).filter(_(0) != "km"))
 				ret = ret ::: List(Array(s(0).toFloat / 1000, s(1).toFloat / 1000))
 		}
 		catch
