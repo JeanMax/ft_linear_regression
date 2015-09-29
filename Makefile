@@ -6,46 +6,40 @@
 #    By: mcanal <mcanal@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2014/11/29 13:16:03 by mcanal            #+#    #+#              #
-#    Updated: 2015/09/29 00:17:15 by mcanal           ###   ########.fr        #
+#    Updated: 2015/09/29 22:59:26 by mcanal           ###   ########.fr        #
 #                                                                              #
 #******************************************************************************#
 
 P_NAME = Predict
 T_NAME = Train
-D_NAME = Draw
 
 P_SRC = Predict.scala
 T_SRC =	Train.scala
-D_SRC =	Draw.scala
 
 P_DIR = src
 T_DIR = src
-D_DIR = src
 VPATH =	src
 O_DIR = obj
 
 P_SRCC = $(addprefix $(P_DIR)/,$(P_SRC))
 T_SRCC = $(addprefix $(T_DIR)/,$(T_SRC))
-D_SRCC = $(addprefix $(D_DIR)/,$(D_SRC))
 P_SRCO = $(P_SRC:%.scala=$(O_DIR)/%.class)
 T_SRCO = $(T_SRC:%.scala=$(O_DIR)/%.class)
-D_SRCO = $(D_SRC:%.scala=$(O_DIR)/%.class)
-OBJS =	$(P_SRCO) $(T_SRCO) $(D_SRCO)
+OBJS =	$(P_SRCO) $(T_SRCO)
 
-I_DIR =	-classpath /home/mcanal/Downloads/scala-2.11.7/scala-swing_2.11-1.0.2.jar /home/mcanal/Downloads/jfreechart-1.0.1/lib/jcommon-1.0.0.jar /home/mcanal/Downloads/jfreechart-1.0.1/lib/jfreechart-1.0.1.jar
-#/home/mcanal/Downloads/jfreechart-1.0.19/lib/jcommon-1.0.23.jar /home/mcanal/Downloads/jfreechart-1.0.19/lib/jfreechart-1.0.19.jar
 CFLAGS =	-deprecation -encoding UTF-8 -unchecked -explaintypes \
 			-Ywarn-dead-code -Ywarn-value-discard -Ywarn-numeric-widen \
 			-Xcheckinit -Xfatal-warnings #-Xcheck-null -feature
 RM = rm -rf
 MKDIR = mkdir -p
+I_DIR =
 
 ifeq ($(shell uname), Linux)
 SC = /home/mcanal/Downloads/scala-2.11.7/bin/scalac
 S = /home/mcanal/Downloads/scala-2.11.7/bin/scala
 else
-SC = scalac
-S = scala
+SC = ~/scala/bin/scalac
+S = ~/scala/bin/scala
 endif
 
 WHITE = \033[37;01m
@@ -67,10 +61,7 @@ $(T_NAME): $(T_SRCO)
 $(P_NAME): $(P_SRCO)
 	@echo "$(BLUE)$< $(WHITE)->$(RED) $@ $(BASIC)"
 	@echo "$(S) -classpath $(O_DIR) $@" > $@ && chmod 755 $@
-
-$(D_NAME): $(D_SRCO)
-	@echo "$(BLUE)$< $(WHITE)->$(RED) $@ $(BASIC)"
-	@echo "$(S) -classpath $(O_DIR) $@" > $@ && chmod 755 $@
+	@open https://docs.google.com/spreadsheets/d/1E4vBq57bbtA1dVX4Qz0vfHpyaV0i1IWrI2HO09IdlRk/edit#gid=1611162065
 
 $(T_SRCO): $(T_SRCC)
 	@echo "$(WHITE)$< ->$(BLUE) $@ $(BASIC)"
@@ -79,10 +70,6 @@ $(T_SRCO): $(T_SRCC)
 $(P_SRCO): $(P_SRCC)
 	@echo "$(WHITE)$< ->$(BLUE) $@ $(BASIC)"
 	@$(SC) $(CFLAGS) $< -d $(O_DIR)
-
-$(D_SRCO): $(D_SRCC)
-	@echo "$(WHITE)$< ->$(BLUE) $@ $(BASIC)"
-	@$(SC) $(CFLAGS) $(I_DIR) $< -d $(O_DIR)
 
 $(OBJS): | $(O_DIR)
 

@@ -15,8 +15,9 @@ import math.abs //do the math
 
 object Train
 {
-	val lRate: Float = 0.0001f //wtf?
-	val limit: Float = 0.000001f
+	val scale: Float = 0.001f
+	val lRate: Float = 0.15f * scale
+	val limit: Float = 0.0000005f
 
 	def readFile =
 	{
@@ -25,7 +26,7 @@ object Train
 		try
 		{
 			for (s <- fromFile("data/data.csv").getLines.toList.map(_.split(",")).filter(_(0) != "km"))
-				ret = ret ::: List(Array(s(0).toFloat / 1000, s(1).toFloat / 1000))
+				ret = ret ::: List(Array(s(0).toFloat * scale, s(1).toFloat * scale))
 		}
 		catch
 		{
@@ -60,7 +61,7 @@ object Train
 		val tmpT1: Float = lRate / data.length * sumT1(data, t0, t1, 0)
 
 		if (abs(tmpT0) < limit && abs(tmpT1) < limit)
-			return (t0 * 1000, t1)
+			return (t0 / scale, t1)
 
 		doTheMath(data, t0 - tmpT0, t1 - tmpT1)
 	}

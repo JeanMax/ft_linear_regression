@@ -34,11 +34,13 @@ object Predict
 		print("Mileage? ")
 		try
 		{
-			val price = t0 + (t1 * readLine().toFloat)
-			if (price > 0)
-				println("Estimated price: " + "%.2f".format(price) + "€")
-			else
-				println("Estimated price: 0€")
+			var price = readLine().toFloat
+			if (price < 0) throw new IllegalArgumentException
+
+			price = t0 + t1 * price.toFloat
+			if (price < 0) price = 0
+
+			println("Estimated price: " + "%.2f".format(price) + "€")
 		}
 		catch
 		{
