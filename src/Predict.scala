@@ -1,12 +1,12 @@
 // ************************************************************************** //
 //                                                                            //
 //                                                        :::      ::::::::   //
-//   predict.jvm                                        :+:      :+:    :+:   //
+//   predict.scala                                      :+:      :+:    :+:   //
 //                                                    +:+ +:+         +:+     //
 //   By: mcanal <zboub@42.fr>                       +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2015/09/27 19:54:37 by mcanal            #+#    #+#             //
-//   Updated: 2015/09/28 18:54:26 by mcanal           ###   ########.fr       //
+//   Updated: 2015/09/30 03:49:04 by mcanal           ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -15,37 +15,45 @@ import scala.io.StdIn.readLine //read... line
 
 object Predict
 {
-	def main(args: Array[String]) : Unit =
+	def readFiles: (Float, Float) =
 	{
-		var t0 : Float = 0f
-		var t1 : Float = 0f
-
 		try
 		{
-			t0 = fromFile("data/t0.learned").getLines.mkString.toFloat
-			t1 = fromFile("data/t1.learned").getLines.mkString.toFloat
+			val t0: Float = fromFile("data/t0.train").getLines.mkString.toFloat
+			val t1: Float = fromFile("data/t1.train").getLines.mkString.toFloat
+			(t0, t1)
 		}
 		catch
 		{
-			case ex: Exception => println("Oops... I know nothing about cars :/")
-				System.exit(0)
+			case ex: Exception => println("Oops... Train me maybe? :/")
+				(0, 0)
 		}
+	}
 
+	def prompt(t0: Float, t1: Float): Unit =
+	{
 		print("Mileage? ")
 		try
 		{
-			var price = readLine().toFloat
-			if (price < 0) throw new IllegalArgumentException
+			val mileage = readLine().toFloat
+			val price = if (t0 + t1 * mileage > 0) t0 + t1 * mileage else 0
 
-			price = t0 + t1 * price.toFloat
-			if (price < 0) price = 0
+			if (mileage < 0) throw new IllegalArgumentException
 
 			println("Estimated price: " + "%.2f".format(price) + "€")
 		}
 		catch
 		{
 			case ex: Exception => println("Nah...")
-				main(args)
+				prompt(t0, t1)
 		}
+	}
+
+	def main(args: Array[String]): Unit =
+	{
+		val (t0, t1) = readFiles
+
+		if (t0 != 0 && t1 != 0)
+			prompt(t0, t1)
 	}
 }

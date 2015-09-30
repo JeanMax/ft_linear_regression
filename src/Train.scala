@@ -1,12 +1,12 @@
 // ************************************************************************** //
 //                                                                            //
 //                                                        :::      ::::::::   //
-//   train.jvm                                          :+:      :+:    :+:   //
+//   train.scala                                        :+:      :+:    :+:   //
 //                                                    +:+ +:+         +:+     //
 //   By: mcanal <zboub@42.fr>                       +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2015/09/27 19:55:54 by mcanal            #+#    #+#             //
-//   Updated: 2015/09/28 18:54:53 by mcanal           ###   ########.fr       //
+//   Updated: 2015/09/30 03:25:18 by mcanal           ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
@@ -19,24 +19,22 @@ object Train
 	val lRate: Float = 0.15f * scale
 	val limit: Float = 0.0000005f
 
-	def readFile =
+	//calculate the precision on t0 and t1
+	def errorRate(data: List[Array[Float]], t0: Float, t1: Float, sum: Float): 
+			(Float) =
 	{
-		var ret: List[Array[Float]] = Nil
+		if (data.tail == Nil)
+			return ((sum + 
+				abs(data.head(1) / scale - (t0 + t1 * data.head(0) / scale))
+				/ (data.head(1) / scale) / data.length * 100))
 
-		try
-		{
-			for (s <- fromFile("data/data.csv").getLines.toList.map(_.split(",")).filter(_(0) != "km"))
-				ret = ret ::: List(Array(s(0).toFloat * scale, s(1).toFloat * scale))
-		}
-		catch
-		{
-			case ex: Exception => println("Wut? Data not found...")
-				System.exit(1)
-		}
-		ret
+		errorRate(data.tail, t0, t1, sum + 
+			abs(data.head(1) / scale - (t0 + t1 * data.head(0) / scale))
+			/ (data.head(1) / scale))
 	}
 
-	def sumT0(data: List[Array[Float]], t0: Float, t1: Float, sum: Float):
+	//calculate the sum needed in t0 formulae
+	def sumT0(data: List[Array[Float]], t0: Float, t1: Float, sum: Float): 
 			Float =
 	{
 		if (data.tail == Nil)
@@ -45,15 +43,18 @@ object Train
 		sumT0(data.tail, t0, t1, sum + t1 * data.head(0) - data.head(1) + t0)
 	}
 
-	def sumT1(data: List[Array[Float]], t0: Float, t1: Float, sum: Float):
+	//calculate the sum needed in t1 formulae
+	def sumT1(data: List[Array[Float]], t0: Float, t1: Float, sum: Float): 
 			Float =
 	{
 		if (data.tail == Nil)
 			return (sum + (t1 * data.head(0)- data.head(1) + t0) * data.head(0))
 
-		sumT1(data.tail, t0, t1, sum + (t1 * data.head(0) - data.head(1) + t0) * data.head(0))
+		sumT1(data.tail, t0, t1, sum + 
+			(t1 * data.head(0) - data.head(1) + t0) * data.head(0))
 	}
 
+	//calculate t0 and t1
 	def doTheMath(data: List[Array[Float]], t0: Float, t1: Float):
 			(Float, Float) =
 	{
@@ -66,21 +67,45 @@ object Train
 		doTheMath(data, t0 - tmpT0, t1 - tmpT1)
 	}
 
-	def main(args: Array[String]): Unit =
+	//parse data.csv into a pretty list
+	def readFile: List[Array[Float]] =
 	{
-		val (t0, t1) = doTheMath(readFile, 0, 0)
+		var ret: List[Array[Float]] = Nil
 
 		try
 		{
-			scala.tools.nsc.io.File("data/t0.learned").writeAll(t0.toString)
-			scala.tools.nsc.io.File("data/t1.learned").writeAll(t1.toString)
+			for (s <- fromFile("data/data.csv").getLines.toList
+					.map(_.split(",")).filter(_(0) != "km"))
+				ret = ret ::: List(Array(
+					s(0).toFloat * scale, s(1).toFloat * scale))
+		}
+		catch
+		{
+			case ex: Exception => println("Wut? Data not found...")
+				System.exit(1)
+		}
+		ret
+	}
+
+	//main... starting point!
+	def main(args: Array[String]): Unit =
+	{
+		val data = readFile
+		val (t0, t1) = doTheMath(data, 0, 0)
+
+		try
+		{
+			scala.tools.nsc.io.File("data/t0.train").writeAll(t0.toString)
+			scala.tools.nsc.io.File("data/t1.train").writeAll(t1.toString)
 		}
 		catch
 		{
 			case ex: Exception => println("Wut? Could not store data...")
 				System.exit(1)
 		}
-		println("t0: " + t0) //debug
-		println("t1: " + t1) //debug
+
+		println("       t0: " + t0)
+		println("       t1: " + t1)
+		println("precision: " + errorRate(data, t0, t1, 0) + "%")
 	}
 }
