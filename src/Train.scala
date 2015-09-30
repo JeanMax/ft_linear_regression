@@ -1,14 +1,21 @@
 // ************************************************************************** //
 //                                                                            //
 //                                                        :::      ::::::::   //
-//   train.scala                                        :+:      :+:    :+:   //
+//   Train.scala                                        :+:      :+:    :+:   //
 //                                                    +:+ +:+         +:+     //
 //   By: mcanal <zboub@42.fr>                       +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2015/09/27 19:55:54 by mcanal            #+#    #+#             //
-//   Updated: 2015/09/30 03:25:18 by mcanal           ###   ########.fr       //
+//   Updated: 2015/09/30 14:52:32 by mcanal           ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
+
+/*
+** Train your model to predict cars price. It will read your dataset
+** file (data/data.csv) and perform a linear regression on the data.
+** Once the linear regression has completed, the variables theta0 and
+** theta1 will be saved for use in Predict.scala.
+*/
 
 import scala.io.Source.fromFile //read file
 import math.abs //do the math
@@ -21,16 +28,14 @@ object Train
 
 	//calculate the precision on t0 and t1
 	def errorRate(data: List[Array[Float]], t0: Float, t1: Float, sum: Float): 
-			(Float) =
+			Float =
 	{
 		if (data.tail == Nil)
-			return ((sum + 
-				abs(data.head(1) / scale - (t0 + t1 * data.head(0) / scale))
-				/ (data.head(1) / scale) / data.length * 100))
+			return ((sum + abs(data.head(1) - (t0 + t1 * data.head(0)))
+				/ data.head(1) / data.length * 100))
 
 		errorRate(data.tail, t0, t1, sum + 
-			abs(data.head(1) / scale - (t0 + t1 * data.head(0) / scale))
-			/ (data.head(1) / scale))
+			abs(data.head(1) - (t0 + t1 * data.head(0))) / data.head(1))
 	}
 
 	//calculate the sum needed in t0 formulae
@@ -106,6 +111,6 @@ object Train
 
 		println("       t0: " + t0)
 		println("       t1: " + t1)
-		println("precision: " + errorRate(data, t0, t1, 0) + "%")
+		println("precision: " + errorRate(data, t0 * scale, t1, 0) + "%")
 	}
 }

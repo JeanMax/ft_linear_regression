@@ -1,20 +1,27 @@
 // ************************************************************************** //
 //                                                                            //
 //                                                        :::      ::::::::   //
-//   predict.scala                                      :+:      :+:    :+:   //
+//   Predict.scala                                      :+:      :+:    :+:   //
 //                                                    +:+ +:+         +:+     //
 //   By: mcanal <zboub@42.fr>                       +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
 //   Created: 2015/09/27 19:54:37 by mcanal            #+#    #+#             //
-//   Updated: 2015/09/30 03:49:04 by mcanal           ###   ########.fr       //
+//   Updated: 2015/09/30 14:50:31 by mcanal           ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
 
+/*
+** Predict the price of a car for a given mileage.
+** It will prompt you for a mileage,
+** and then give you back the estimated price for that mileage.
+*/
+
 import scala.io.Source.fromFile //read file
-import scala.io.StdIn.readLine //read... line
+import scala.io.StdIn.readLine //read... line (stdin)
 
 object Predict
 {
+	//parse t0/t1 from files made by Train.scala
 	def readFiles: (Float, Float) =
 	{
 		try
@@ -30,6 +37,7 @@ object Predict
 		}
 	}
 
+	//prompt user for a mileage, then print the estimated price
 	def prompt(t0: Float, t1: Float): Unit =
 	{
 		print("Mileage? ")
@@ -49,6 +57,7 @@ object Predict
 		}
 	}
 
+	//main... starting point!
 	def main(args: Array[String]): Unit =
 	{
 		val (t0, t1) = readFiles
